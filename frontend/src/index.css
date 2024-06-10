@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.square-dark{
+    background-color:green;
+}
+.square-light{
+    background-color: rgb(224, 212, 212);
+}
+.square-highLight{
+    background-color: yellow;
+}
+.height-moves{
+    height: 512px;
+    margin-top: 80px;
+    width: 300px;
+}
