@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
+import { UserContext } from '../contexts/userContext';
 import {
 
   signInWithEmailAndPassword,
@@ -12,7 +13,7 @@ import { auth } from "../firebase.js";
 import { Link, Outlet } from "react-router-dom";
 export default function () {
   const navigate = useNavigate();
-  const [user, setUser] = React.useState(null);
+  const {user, setUser} = React.useContext(UserContext);
   
   async function login(event) {
     event.preventDefault();
@@ -23,7 +24,7 @@ export default function () {
         info.password
       );
       navigate("/landing?user=" + user.user.email);
-      console.log(user);
+      console.log(user.user.email);
     } catch (error) {
       console.error(error);
     }
@@ -40,7 +41,9 @@ export default function () {
   }
   React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log(currentUser.email);
       setUser(currentUser);
+
     });
     return () => unsubscribe();
   }, []);

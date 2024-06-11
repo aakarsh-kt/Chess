@@ -1,19 +1,19 @@
 import Game from "./Game.js";
 import { INIT_GAME, MOVE } from "./messages.js";
-import { gameCollectionRef } from "../../frontend/src/firebase.js";
-import { db } from "./firebaseBack.js";
-import { set } from "firebase/database";
+// import { gameCollectionRef } from "../../frontend/src/firebase.js";
+// import { db } from "./firebaseBack.js";
+// import { set } from "firebase/database";
 // import { addDoc, serverTimestamp } from "firebase/firestore";
 export default class GameManager {
-  addGame = async (game, player1, player2) => {
-    const docRef = db.collection('gameCollectionRef').doc("123");
-    await docRef.set({
-      game: game,
-      player1: player1,
-      player2: player2,
-    });
-    console.log("Document written successfully.");
-  };
+  // addGame = async (game, player1, player2) => {
+  //   const docRef = db.collection('gameCollectionRef').doc("123");
+  //   await docRef.set({
+  //     game: game,
+  //     player1: player1,
+  //     player2: player2,
+  //   });
+  //   console.log("Document written successfully.");
+  // };
   constructor() {
     this.games = [];
     this.users = [];
@@ -43,9 +43,12 @@ export default class GameManager {
           if (this.pendingUsers.length > 0) {
             const opponentSocket = this.pendingUsers.pop();
             const game = new Game(socket, opponentSocket);
-            console.log(game);
-            addGame(game, this.player1, this.player2);
+            // console.log(game);
+            // addGame(game, this.player1, this.player2);
             this.games.push(game);
+           
+            // console.log(socket, opponentSocket); 
+
           } else {
             this.pendingUsers.push(socket);
           }

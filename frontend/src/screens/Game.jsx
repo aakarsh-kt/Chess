@@ -5,6 +5,7 @@ import { useSocket } from "../hooks/useSocket";
 import { Button } from "@mui/material";
 import { Record } from "../components/Record";
 import { gameCollectionRef,db } from "../firebase";
+import Navbar from "../components/Navbar";
 
 const GAME_OVER = "game_over";
 const MOVE = "move";
@@ -18,7 +19,7 @@ export default function () {
   const [board, setBoard] = useState(chess.board());
 
   function addGameToFirebase(){
-    console.log(socket);
+    // console.log(socket);
   }
   useEffect(() => {
     setBoard(chess.board());
@@ -57,28 +58,32 @@ export default function () {
   // console.log(chess.);
 //   console.log(board);    
   return (
-    <div className="flex flex-row items-center justify-around">
-      <div>
-        <ChessBoard
-          board={board}
-          setBoard={setBoard}
-          chess={chess}
-          setChess={setChess}
-          socket={socket}
-          moves={moves}
-          setMoves={setMoves}
-        />
-      </div>
-      <div>
-        {!dispButton && (
-          <Button
-            type="primary"
-            onClick={() => socket?.send(JSON.stringify({ type: INIT_GAME }))}
-          >
-            Play!
-          </Button>
-        )}
-        {dispButton && <Record moves={moves} />}
+
+    <div className="flex flex-col">
+      <Navbar/>
+      <div className="flex flex-row items-center justify-around">
+        <div>
+          <ChessBoard
+            board={board}
+            setBoard={setBoard}
+            chess={chess}
+            setChess={setChess}
+            socket={socket}
+            moves={moves}
+            setMoves={setMoves}
+          />
+        </div>
+        <div>
+          {!dispButton && (
+            <Button
+              type="primary"
+              onClick={() => socket?.send(JSON.stringify({ type: INIT_GAME }))}
+            >
+              Play!
+            </Button>
+          )}
+          {dispButton && <Record moves={moves} />}
+        </div>
       </div>
     </div>
   );

@@ -1,34 +1,58 @@
 import { OrbitControls } from "@react-three/drei";
+import React from "react";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import Hero from "../components/ChessModel";
 import Phoenix from "../components/Phoenix_bird";
 import Dragon from "../components/Dragon_flying";
 import House from "../components/House";
+import Pawn from "../components/Pawns";
 import Sidebar from "../components/Sidebar";
+import KnightFighting from "../components/KnightFighting";
+import { UserContext } from "../contexts/userContext";
+import { useContext } from "react";
+import { Button } from "@mui/material";
+import SinglePawn from "../components/SinglePawn";
+import Navbar from "../components/Navbar";
 export default function () {
   const navigate = useNavigate();
+  const {user,setUser}=useContext(UserContext);
+  const [color, setColor] = React.useState(0x333333); 
+  const [color2, setColor2] = React.useState(0xffffff); 
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-700  ">
-      <h1 className="text-white text-center text-5xl font-bold mt-4">
-        Play Chess Online on World's #3 site
-      </h1>
-      <div className="flex flex-1 justify-around items-center">
-        <Sidebar />
-        <img src="chessBoard.jpg" alt="chess board" className="max-w-100 max-h-96 " />
-        
-        {/* <Canvas>
+    <div className="h-screen w-screen flex flex-col bg-slate-800  ">
+      <Navbar/>
+      <div className="flex flex-row items-center">
+      <Canvas>
           <OrbitControls />
           
           <ambientLight intensity={1} />
-          <House/>
+          <directionalLight position={[5,0,1]} intensity={1} />
+          {/* <SinglePawn color={color2}/> */}
+          <KnightFighting/>
+        </Canvas>
 
-        </Canvas> */}
+        <h1 className="text-white text-center text-6xl font-bold mt-6">
+         Chess Wizards
+        </h1>
+        <Canvas>
+          <OrbitControls />
+          
+          <ambientLight intensity={1} />
+          <directionalLight position={[10, 10, 5]} intensity={1} />
+          <SinglePawn color={color}/>
 
+        </Canvas>
+
+      </div>
+      <div className="flex flex-1 justify-around items-center">
+       {/* {user.email===""?<Sidebar /> : <Button>Logout</Button>} */}
+       {console.log(user?.email)   }
+        <img src="chessBoard.jpg" alt="chess board" className="max-w-100 max-h-96 " />
+        
+       
         <div className="flex flex-col gap-y-5 mr-20 ">
-          <button className="btn bg-green-400 h-60px italic hover:bg-green-700 rounded text-2xl px-8 py-4 hover:text-white font-medium">
-            Play with computer
-          </button>
+          
           <button
             className="btn bg-green-400 h-60px italic hover:bg-green-700 rounded text-2xl px-8 py-4 hover:text-white font-medium"
             onClick={() => navigate("/game")}

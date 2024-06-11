@@ -8,14 +8,14 @@ export default function () {
   const navigate = useNavigate();
 //   const [user, setUser] = useState(null);
 //   setUser(useContext(UserContext));
-    const user=useContext(UserContext);
+    const {user,setUser}=useContext(UserContext);
   return (
     <div className="w-300px flex flex-col m-2 gap-10">
       <Button type="primary"  onClick={()=>navigate("/login")}>
         <h3 className="text-white font-medium bg-green-400 rounded-md p-2">Login</h3>
       </Button>
-      <h2>{user?.user}</h2>
-   {   console.log(user)}
+      {/* <h2>{user.email}</h2> */}
+   {   console.log(user.email)}
       <Button type="primary" onClick={()=>navigate("/register")}>
         <h3 className="text-white font-medium bg-green-400 rounded-md p-2">Register</h3>
       </Button>

@@ -25,6 +25,7 @@ export default class Game {
         },
       })
     );
+ 
     this.player2.send(
       JSON.stringify({
         type: INIT_GAME,
