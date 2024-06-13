@@ -6,15 +6,26 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
+  signInWithPopup,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-import { auth } from "../firebase.js";
+import { auth, provider } from "../firebase.js";
 import { Link, Outlet } from "react-router-dom";
 export default function () {
   const navigate = useNavigate();
   const {user, setUser} = React.useContext(UserContext);
-  
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const tempUser = result.user;
+        console.log("User info:", tempUser);
+        navigate("/landing?user=");
+      })
+      .catch((error) => {
+        console.error("Error during sign-in:", error);
+      });
+  };
   async function login(event) {
     event.preventDefault();
     try {
@@ -77,6 +88,15 @@ export default function () {
         <button type="submit" className="size-8 w-40 ml-10 h-10 bg-cyan-500  rounded-md" >Login</button>
         {/* {user?.email} */}
       </form>
+      <div className="flex flex-col items-center">
+          <h1 className="text-2xl text-white font-bold">Sign In with Google</h1>
+
+          <img
+            src="googleSignInLogo.png"
+            onClick={signInWithGoogle}
+            className="bg-white w-10 h-10 cursor-pointer border rounded-full"
+          />
+        </div>
       <div className="flex flex-col text-white items-center gap-2">
           <h3>Don't have an account, Sign up now</h3>
           <Link to="/register" className="text-cyan-400" >

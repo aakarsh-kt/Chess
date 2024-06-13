@@ -1,5 +1,5 @@
 import { OrbitControls } from "@react-three/drei";
-import React from "react";
+import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import Hero from "../components/ChessModel";
@@ -14,11 +14,14 @@ import { useContext } from "react";
 import { Button } from "@mui/material";
 import SinglePawn from "../components/SinglePawn";
 import Navbar from "../components/Navbar";
+
 export default function () {
   const navigate = useNavigate();
   const {user,setUser}=useContext(UserContext);
+  // console.log(user);
   const [color, setColor] = React.useState(0x333333); 
   const [color2, setColor2] = React.useState(0xffffff); 
+  
   return (
     <div className="h-screen w-screen flex flex-col bg-slate-800  ">
       <Navbar/>
@@ -27,9 +30,9 @@ export default function () {
           <OrbitControls />
           
           <ambientLight intensity={1} />
-          <directionalLight position={[5,0,1]} intensity={1} />
-          {/* <SinglePawn color={color2}/> */}
-          <KnightFighting/>
+          <directionalLight position={[10, 10, 5]} intensity={1} />
+          <SinglePawn color={color2}/>
+          {/* <KnightFighting/> */}
         </Canvas>
 
         <h1 className="text-white text-center text-6xl font-bold mt-6">
@@ -59,6 +62,7 @@ export default function () {
           >
             Play Online
           </button>
+         
         </div>
       </div>
     </div>
