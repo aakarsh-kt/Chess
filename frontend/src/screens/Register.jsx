@@ -8,6 +8,7 @@ import { Button } from "@mui/material";
 import { usersCollectionRef } from "../firebase.js";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { nanoid } from "nanoid";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Navbar from "../components/Navbar.jsx";
 export default function () {
   const navigate = useNavigate();
@@ -15,7 +16,9 @@ export default function () {
 
   async function addDocument(user) {
     // event.preventDefault();
-    const obj = { name: user.displayName, email: user.email, uid: user.uid };
+
+    console.log(user);
+    const obj = { name: user.displayName, email: user.email, uid: user.uid ,games:[]};
     const ref = await addDoc(usersCollectionRef, obj);
     setUser(user.displayName);
   }
@@ -42,11 +45,23 @@ export default function () {
         info.password
       );
 
+      const storageRef = ref(storage, `profilePictures/${user.uid}`);
+      if (profilePic) {
+        await uploadBytes(storageRef, profilePic);
+        const profilePicURL = await getDownloadURL(storageRef);
+
+        // Save user data in Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          username: username,
+          email: email,
+          profilePicture: profilePicURL
+        });
 
       navigate("/landing");
       // navigate("/app");
       console.log(user);
-    } catch (error) {
+    }
+   } catch (error) {
       console.error(error);
     }
   }
@@ -56,6 +71,7 @@ export default function () {
     email: "",
     uid: nanoid(),
     password: "",
+    games:[]
   });
   function handleChange(event) {
     const { name, value } = event.target;

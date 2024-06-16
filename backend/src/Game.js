@@ -1,19 +1,21 @@
 import { Chess } from "chess.js";
 import { INIT_GAME, MOVE, GAME_OVER } from "./messages.js";
 import { time } from "console";
+import {nanoid} from "nanoid";
 
 export default class Game {
   constructor(player1, player2, timeControl, subType,player1Info,player2Info) {
+    this.id=nanoid();
     this.player1 = player1;
     this.player2 = player2;
-    this.player1Clock=timeControl;
-    this.player2Clock=timeControl;
+    this.player1Info=player1Info;
+    this.player2Info=player2Info;
     this.timeControl = timeControl;
     this.subType = subType;
     this.board = new Chess();
     this.movecount = 0;
     this.startTime = new Date();
-
+    
     this.player1.send(
       JSON.stringify({
         type: INIT_GAME,

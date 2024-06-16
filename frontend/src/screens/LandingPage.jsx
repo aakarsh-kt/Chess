@@ -1,5 +1,5 @@
 import { OrbitControls } from "@react-three/drei";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import Hero from "../components/ChessModel";
@@ -14,11 +14,14 @@ import { useContext } from "react";
 import { Button } from "@mui/material";
 import SinglePawn from "../components/SinglePawn";
 import Navbar from "../components/Navbar";
+import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function () {
   const navigate = useNavigate();
   const {user,setUser}=useContext(UserContext);
-  // console.log(user);
+
+  console.log(user);
   const [color, setColor] = React.useState(0x333333); 
   const [color2, setColor2] = React.useState(0xffffff); 
   

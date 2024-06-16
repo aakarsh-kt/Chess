@@ -1,25 +1,18 @@
 import Game from "./Game.js";
-import { INIT_GAME, MOVE } from "./messages.js";
-// import { gameCollectionRef } from "../../frontend/src/firebase.js";
-// import { db } from "./firebaseBack.js";
-// import { set } from "firebase/database";
-// import { addDoc, serverTimestamp } from "firebase/firestore";
+import { INIT_GAME,MOVE } from "./messages.js";
+import admin from 'firebase-admin';
+import serviceAccount from './chess-e3600-firebase-adminsdk-ckjup-4e265a5600.json' assert { type: 'json' };
+admin.initializeApp({
+credential: admin.credential.cert(serviceAccount),
+databaseURL: "https://chess-e3600-default-rtdb.firebaseio.com",
+});
+const db = admin.firestore();
 export default class GameManager {
-  // addGame = async (game, player1, player2) => {
-  //   const docRef = db.collection('gameCollectionRef').doc("123");
-  //   await docRef.set({
-  //     game: game,
-  //     player1: player1,
-  //     player2: player2,
-  //   });
-  //   console.log("Document written successfully.");
-  // };
   constructor() {
     this.games = [];
     this.users = [];
     this.pendingUsers = {
       rapid: {
-       
         "10|0": [],
         "15|10": [],
         "10|5": [],
@@ -35,13 +28,43 @@ export default class GameManager {
         "30sec|0": [],
       },
       blitz: {
-        "3|0":[],
-        "3|2":[],
-        "5|0":[],
-        "5|5":[],
-        "5|2":[],
+        "3|0": [],
+        "3|2": [],
+        "5|0": [],
+        "5|5": [],
+        "5|2": [],
       },
     };
+  }
+
+  async addGame(game) {
+    console.log(game);
+    const obj = { id: game.id, player1: game.player1Info?.email, player2: game.player2Info?.email, timeControl: game.timeControl, subType: game.subType, startTime: game.startTime };
+    try {
+      const docRef = await db.collection("games").add(obj);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+    const usersRef = db.collection('users');
+    const q = usersRef.where('email', '==', game.player1Info?.email);
+    const querySnapshot = await q.get();
+    const userGame={ id: game.id, player1: game.player1Info?.email, player2: game.player2Info?.email, timeControl: game.timeControl, subType: game.subType, startTime: game.startTime}
+    if (querySnapshot.empty) {
+      console.log('No matching documents.');
+      return;
+    }
+    querySnapshot.forEach(async (doc) => {
+      const docRef = doc.ref;
+      try {
+        await docRef.update({
+          games: admin.firestore.FieldValue.arrayUnion(obj)
+        });
+        console.log('Game added to user successfully');
+      } catch (error) {
+        console.error('Error adding game to user: ', error);
+      }
+    });
   }
 
   addUser(socket) {
@@ -53,242 +76,55 @@ export default class GameManager {
     this.users = this.users.filter((user) => user !== socket);
   }
 
+  handleGame(socket, userInfo, timeControl, subType, category) {
+    if (this.pendingUsers[category][subType].length > 0) {
+      const opponentObj = this.pendingUsers[category][subType].pop();
+      const opponentSocket = opponentObj.s;
+      const opponentInfo = opponentObj.i;
+
+      const game = new Game(
+        socket,
+        opponentSocket,
+        timeControl,
+        subType,
+        userInfo,
+        opponentInfo
+      );
+      this.games.push(game);
+      this.addGame(game);
+    } else {
+      this.pendingUsers[category][subType].push({ s: socket, i: userInfo });
+    }
+  }
+
   addHandler(socket) {
-    console.log(this.users.length);
     socket.emit("Player Connected", "You are connected");
 
     socket.on("message", (data) => {
       console.log("in GameManager");
       try {
         const message = JSON.parse(data);
-        // console.log("Received message", message);
 
         if (message.type === INIT_GAME) {
-          const userInfo=message.userInfo;
-          console.log(userInfo);
-          if(message.timeControl==="blitz")
-            {
-              const subType=message.subType;
-              switch(subType)
-             { 
-              case "3|0":{
-                if (this.pendingUsers.blitz["3|0"].length > 0) {
-                const {opponentSocket,opponentInfo} = this.pendingUsers.blitz["3|0"].pop();
-                
-                const game = new Game(socket, opponentSocket,message.timeControl,subType,userInfo,opponentInfo);
-                this.games.push({game});
-            } else {
-                this.pendingUsers.blitz["3|0"].push({socket,userInfo});
-              }
+          const userInfo = message.userInfo;
+          const timeControl = message.timeControl;
+          const subType = message.subType;
+
+          switch (timeControl) {
+            case "blitz":
+              this.handleGame(socket, userInfo, timeControl, subType, "blitz");
               break;
-            
-            }
-              case "3|2":{
-                if(this.pendingUsers.blitz["3|2"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.blitz["3|2"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.blitz["3|2"].push(socket);
-                }
+            case "bullet":
+              this.handleGame(socket, userInfo, timeControl, subType, "bullet");
               break;
-                }
-              case "5|0":{
-                if(this.pendingUsers.blitz["5|0"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.blitz["5|0"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.blitz["5|0"].push(socket);
-                }
-                break;
-              }
-              case "5|5":{
-                if(this.pendingUsers.blitz["5|5"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.blitz["5|5"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.blitz["5|5"].push(socket);
-                }
-                break;
-              }
-              case "5|2":{
-                if(this.pendingUsers.blitz["5|2"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.blitz["5|2"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.blitz["5|2"].push(socket);
-                }
-                break;
-              }
-                default:console.log("Invalid subType");
-              
-                
-              }
-            }
-          else if(message.timeControl==="bullet")
-          {
-            const subType=message.subType;
-            switch(subType)
-           { 
-            case "1|0":{
-              if (this.pendingUsers.bullet["1|0"].length > 0) {
-              const opponentSocket = this.pendingUsers.bullet["1|0"].pop();
-              const game = new Game(socket, opponentSocket,message.timeControl,subType);
-              this.games.push(game);
-            } else {
-              this.pendingUsers.bullet["1|0"].push(socket);
-            }
-            break;
-          
+            case "rapid":
+              this.handleGame(socket, userInfo, timeControl, subType, "rapid");
+              break;
+            default:
+              console.log("Invalid time control");
           }
-            case "1|1":{
-              if(this.pendingUsers.bullet["1|1"].length>0)
-                {
-                  const opponentSocket = this.pendingUsers.bullet["1|1"].pop();
-                  const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                  this.games.push(game);
-                }
-              else{
-                this.pendingUsers.bullet["1|1"].push(socket);
-              }
-            break;
-              }
-            case "2|1":{
-              if(this.pendingUsers.bullet["2|1"].length>0)
-                {
-                  const opponentSocket = this.pendingUsers.bullet["2|1"].pop();
-                  const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                  this.games.push(game);
-                }
-              else{
-                this.pendingUsers.bullet["2|1"].push(socket);
-              }
-              break;
-            }
-            case "20sec|1":{
-              if(this.pendingUsers.bullet["20sec|1"].length>0)
-                {
-                  const opponentSocket = this.pendingUsers.bullet["20sec|1"].pop();
-                  const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                  this.games.push(game);
-                }
-              else{
-                this.pendingUsers.bullet["20sec|1"].push(socket);
-              }
-              break;
-            }
-            case "30sec|0":{
-              if(this.pendingUsers.bullet["30sec"].length>0)
-                {
-                  const opponentSocket = this.pendingUsers.bullet["30sec"].pop();
-                  const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                  this.games.push(game);
-                }
-              else{
-                this.pendingUsers.bullet["30sec"].push(socket);
-              }
-              break;
-            }
-              default:console.log("Invalid subType");
-            
-              
-            }
-          }
-          else if(message.timeControl==="rapid")
-            {
-              const subType=message.subType;
-              switch(subType)
-             { 
-              case "10|0":{
-                if (this.pendingUsers.rapid["10|0"].length > 0) {
-                const opponentSocket = this.pendingUsers.rapid["10|0"].pop();
-                const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                this.games.push(game);
-       
-    
-              } else {
-                this.pendingUsers.rapid["10|0"].push(socket);
-              }
-              break;
-            
-            }
-              case "15|10":{
-                if(this.pendingUsers.rapid["15|10"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.rapid["15|10"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.rapid["15|10"].push(socket);
-                }
-              break;
-                }
-              case "30|0":{
-                if(this.pendingUsers.rapid["30|0"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.rapid["30|0"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.rapid["30|0"].push(socket);
-                }
-                break;
-              }
-              case "10|5":{
-                if(this.pendingUsers.rapid["10|5"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.rapid["10|5"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.rapid["10|5"].push(socket);
-                }
-                break;
-              }
-              case "20|0":{
-                if(this.pendingUsers.rapid["20|0"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.rapid["20|0"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.rapid["20|0"].push(socket);
-                }
-                break;
-              }
-              case "60|0":{
-                if(this.pendingUsers.rapid["60|0"].length>0)
-                  {
-                    const opponentSocket = this.pendingUsers.rapid["60|0"].pop();
-                    const game = new Game(socket, opponentSocket,message.timeControl,subType);
-                    this.games.push(game);
-                  }
-                else{
-                  this.pendingUsers.rapid["60|0"].push(socket);
-                }
-                break;
-              }
-                default:console.log("Invalid subType");
-              
-                
-              }
-            }
-      }
+        }
+
         if (message.type === MOVE) {
           const game = this.games.find(
             (game) => game.player1 === socket || game.player2 === socket

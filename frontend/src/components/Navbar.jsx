@@ -9,6 +9,7 @@ function Navbar() {
    
         async function logout() {
             console.log("reached");
+            setUser(undefined);
             await signOut(auth);
           }
        

@@ -7,7 +7,7 @@ import { Record } from "../components/Record";
 import { gameCollectionRef, db } from "../firebase";
 import Navbar from "../components/Navbar";
 import TimeOptions from "../components/TimeOptions";
-import CircularIndeterminate from "../funtions/loader";
+import CircularIndeterminate from "../functions/loader";
 import PlayerNameHolder from "../components/PlayerNameHolder";
 import OpponentNameHolder from "../components/OpponentNameHolder";
 import { UserContext } from "../contexts/userContext";
@@ -77,7 +77,7 @@ export default function () {
   //   console.log(board);
 
   function setTime(mode2, selectedTime2) {
-    console.log(mode, selectedTime);
+    console.log(mode2, selectedTime2);
     setSelectedTime(selectedTime2);
     setMode(mode2);
     socket?.send(
@@ -98,6 +98,7 @@ export default function () {
     <div className="flex flex-col">
       <Navbar />
       <div className="flex flex-row items-center justify-around">
+      <PlayerNameHolder loaderShow={loaderShow} selectedTime={selectedTime}/>
         <div className="flex flex-col ">
           {/* <OpponentNameHolder  /> */}
           <div>
@@ -112,7 +113,7 @@ export default function () {
               setMoves={setMoves}
             />
           </div>
-          <PlayerNameHolder />
+          {/* <PlayerNameHolder /> */}
         </div>
         <div>
           {!dispButton && !showOptions && showPlayButton && (
