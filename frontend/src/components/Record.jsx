@@ -16,7 +16,7 @@ export const Record = (props) => {
     <div className="height-moves">
       <div className="w-full flex flex-col bg-slate-400 p-5 rounded-md min-h-full items-start">
         {pairedMoves.map((pair, index) => (
-          <div key={index} className="flex flex-row w-full gap-20">
+          <div key={index} className="flex flex-row w-full gap-10">
             <h3>{index + 1}.</h3>
             <h3 className="text-white">{pair[0]}</h3>
             {pair[1] && <h3 className="text-white">{pair[1]}</h3>}

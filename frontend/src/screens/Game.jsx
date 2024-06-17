@@ -16,7 +16,7 @@ const MOVE = "move";
 const INIT_GAME = "init_game";
 
 export default function () {
-  const {user,setUser}=useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [moves, setMoves] = useState([]);
   const socket = useSocket();
   const [dispButton, setDispButton] = useState(false);
@@ -28,6 +28,7 @@ export default function () {
   // function addGameToFirebase() {
   //   // console.log(socket);
   // }
+  const [moveNo, setMoveNo] = useState(0);
   useEffect(() => {
     setBoard(chess.board());
   }, [chess]);
@@ -59,6 +60,7 @@ export default function () {
 
             setBoard(chess.board());
             setMoves(chess.history());
+            setMoveNo((prev) => prev + 1);
             // console.log("Move");
             break;
           case GAME_OVER:
@@ -73,6 +75,7 @@ export default function () {
   const [mode, setMode] = useState("bullet");
   const [selectedTime, setSelectedTime] = useState(null);
   const [showPlayButton, setShowPlayButton] = useState(true);
+
   // console.log(chess.);
   //   console.log(board);
 
@@ -98,7 +101,15 @@ export default function () {
     <div className="flex flex-col">
       <Navbar />
       <div className="flex flex-row items-center justify-around">
-      <PlayerNameHolder loaderShow={loaderShow} selectedTime={selectedTime}/>
+        <PlayerNameHolder
+          loaderShow={loaderShow}
+          selectedTime={selectedTime}
+          playerColour={playerColour}
+          moveNo={moveNo}
+          socket={socket}
+          chess={chess}
+          dispButton={dispButton}
+        />
         <div className="flex flex-col ">
           {/* <OpponentNameHolder  /> */}
           <div>

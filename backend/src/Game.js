@@ -37,6 +37,36 @@ export default class Game {
     );
   }
 
+  gameOver(socket,winner){
+    if(socket===this.player1)
+    {
+      this.player2.send(
+        JSON.stringify({
+          type:GAME_OVER,
+          payload:{
+            winner:winner,
+          }
+        })
+      );
+    }
+    else{
+      this.player1.send(
+        JSON.stringify({
+          type:GAME_OVER,
+          payload:{
+            winner:winner,
+          }
+        })
+      );
+    }
+    console.log( JSON.stringify({
+      type:GAME_OVER,
+      payload:{
+        winner:winner,
+      }
+    }));
+  }
+
   makeMove(socket, move) {
     console.log(move, "in Game Class");
 

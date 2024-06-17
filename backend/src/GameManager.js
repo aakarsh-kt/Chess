@@ -1,5 +1,5 @@
 import Game from "./Game.js";
-import { INIT_GAME,MOVE } from "./messages.js";
+import { GAME_OVER, INIT_GAME,MOVE } from "./messages.js";
 import admin from 'firebase-admin';
 import serviceAccount from './chess-e3600-firebase-adminsdk-ckjup-4e265a5600.json' assert { type: 'json' };
 admin.initializeApp({
@@ -132,6 +132,13 @@ export default class GameManager {
           if (game) {
             game.makeMove(socket, message.payload);
           }
+        }
+        if(message.type ===GAME_OVER){
+          const winner=message.payload.winner;
+          const game = this.games.find(
+            (game) => game.player1 === socket || game.player2 === socket
+          );
+          game.gameOver(socket,winner);
         }
       } catch (error) {
         console.error("Failed to parse message", error);
