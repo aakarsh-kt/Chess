@@ -12,7 +12,7 @@
     const [moveNo, setMoveNo] = useState(props?.moveNo);
     const [playerColour, setPlayerColour] = useState(props?.playerColour);
     useEffect(() => {
-      console.log(props.time);
+      // console.log(props.time);
       const s = props.time;
       if (s != null) {
         for (let i = 0; i < s.length; i++) {
@@ -22,7 +22,7 @@
           }
         }
       } else {
-        console.log(time);
+        // console.log(time);
         setTime(0);
         setIncrement(0);
       }
@@ -37,13 +37,13 @@
     useEffect(() => {
       if(player1Time===0)
       {
-        console.log("Player 1 time ran out");
+        // console.log("Player 1 time ran out");
         props.socket.send(JSON.stringify({type:'game_over',payload:{winner:'b'}}))
         
       }
       else if(player2Time===0)
         {
-        console.log("Player 2 time ran out");
+        // console.log("Player 2 time ran out");
         props.socket.send(JSON.stringify({type:'game_over',payload:{winner:'w'}}))
       }
       if(props.dispButton===true || seconds!=null)
@@ -66,19 +66,19 @@
     useEffect(()=>{
       if(player1Time!=null && player1Time===0 )
         {
-          console.log("Player 1 time ran out");
+          // console.log("Player 1 time ran out");
           props.socket?.send(JSON.stringify({type:'game_over',payload:{winner:'b'}}))
           
         }
         else if(player2Time!=null && player2Time===0)
           {
-          console.log("Player 2 time ran out");
+          // console.log("Player 2 time ran out");
           props.socket?.send(JSON.stringify({type:'game_over',payload:{winner:'w'}}))
         }
     },[player1Time,player2Time])
     return (
       <div>
-        {   console.log(player1Time)}
+        {/* {   console.log(player1Time)} */}
         {/* {   console.log(props.moveNo)} */}
         <Box className="flex flex-col items-center bg-slate-500 rounded-md cursor-pointer">
 

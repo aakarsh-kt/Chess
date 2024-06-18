@@ -2,86 +2,90 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, provider, db } from "../firebase.js";
 import { useNavigate } from "react-router-dom";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { TextField } from "@mui/material";
-import { Button } from "@mui/material";
-import { usersCollectionRef } from "../firebase.js";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { nanoid } from "nanoid";
+import { signInWithPopup } from "firebase/auth";
+import { TextField, Button } from "@mui/material";
+import { usersCollectionRef, storage } from "../firebase.js";
+import { addDoc, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Navbar from "../components/Navbar.jsx";
-export default function () {
+
+export default function Signup() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [file, setFile] = useState(null);
+  const [error, setError] = useState('');
+  const [val, setVal] = useState(false);
+  const [info, setInfo] = useState({
+    displayName: "",
+    email: "",
+    password: "",
+    profilePicture: "",
+  });
 
-  async function addDocument(user) {
-    // event.preventDefault();
+  const addDocument = async (user, url,name) => {
+    const obj = {
+      name: name,
+      email: user.email,
+      games: [],
+      profilePicture: url,
+      createdAt: serverTimestamp(),
+    };
 
-    console.log(user);
-    const obj = { name: user.displayName, email: user.email, uid: user.uid ,games:[]};
-    const ref = await addDoc(usersCollectionRef, obj);
-    setUser(user.displayName);
-  }
-  // const [success, setSuccess] = React.useState(false);
+    try {
+      await setDoc(doc(db, "users", user.uid), obj);
+      setUser(user.displayName);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      setError(error.message);
+    }
+  };
+
   const signInWithGoogle = () => {
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         const tempUser = result.user;
-        console.log("User info:", tempUser);
-        addDocument(tempUser);
+        const storageRef = ref(storage, `profilePictures/${tempUser.uid}`);
+        await uploadBytes(storageRef, file);
+        const profilePicUrl = await getDownloadURL(storageRef);
+
+        addDocument(tempUser, profilePicUrl);
+        navigate("/landing");
       })
       .catch((error) => {
         console.error("Error during sign-in:", error);
+        setError(error.message);
       });
   };
-  async function register(event) {
+
+  const register = async (event) => {
     event.preventDefault();
-    addDocument(info);
-    console.log("Reached here");
+
     try {
-      const user = await createUserWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         info.email,
         info.password
       );
-
+      const user = userCredential.user;
       const storageRef = ref(storage, `profilePictures/${user.uid}`);
-      if (profilePic) {
-        await uploadBytes(storageRef, profilePic);
-        const profilePicURL = await getDownloadURL(storageRef);
+      await uploadBytes(storageRef, file);
+      const profilePicUrl = await getDownloadURL(storageRef);
 
-        // Save user data in Firestore
-        await setDoc(doc(db, "users", user.uid), {
-          username: username,
-          email: email,
-          profilePicture: profilePicURL
-        });
-
+      await addDocument(user, profilePicUrl,info.displayName);
       navigate("/landing");
-      // navigate("/app");
-      console.log(user);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      setError(error.message);
     }
-   } catch (error) {
-      console.error(error);
-    }
-  }
-  const [val, setVal] = React.useState(false);
-  const [info, setInfo] = React.useState({
-    displayName: "",
-    email: "",
-    uid: nanoid(),
-    password: "",
-    games:[]
-  });
-  function handleChange(event) {
+  };
+
+  const handleChange = (event) => {
     const { name, value } = event.target;
-    setInfo((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  }
+    setInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   return (
     <div className="flex flex-col items-center gap-10 h-screen">
@@ -90,7 +94,6 @@ export default function () {
       <div className="flex flex-row justify-between m-10">
         <div className="flex flex-col items-center">
           <h1 className="text-2xl text-white font-bold">SignUp with Google</h1>
-
           <img
             src="googleSignInLogo.png"
             onClick={signInWithGoogle}
@@ -106,7 +109,6 @@ export default function () {
               className="w-10 h-10 rounded-full"
               onClick={() => setVal(!val)}
             />
-        
           </div>
           {val && (
             <form
@@ -121,36 +123,40 @@ export default function () {
                 required
                 className="size-10 w-60 h-10 bg-white  rounded-md"
                 onChange={handleChange}
-              ></TextField>
+              />
               <label htmlFor="email">Email</label>
               <TextField
-                // className="stand rd-basic"
                 type="email"
                 id="email"
                 name="email"
                 required
                 className="size-10 w-60 h-10 bg-white  rounded-md"
                 onChange={handleChange}
-              ></TextField>
-              {/* <br /> */}
+              />
               <label htmlFor="password">Password</label>
               <TextField
-                // className="standard-basic"
                 type="password"
                 id="password"
                 name="password"
                 className="size-10 w-60 h-10 bg-white  rounded-md"
                 onChange={handleChange}
                 required
-              ></TextField>
+              />
+              <div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  required
+                />
+              </div>
               <br />
-              <Button type="primary" onClick={register}>
-                Register
-              </Button>
+              <Button type="submit">Register</Button>
             </form>
           )}
         </div>
       </div>
+      {error && <p>{error}</p>}
     </div>
   );
 }

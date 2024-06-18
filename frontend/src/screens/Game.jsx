@@ -11,6 +11,8 @@ import CircularIndeterminate from "../functions/loader";
 import PlayerNameHolder from "../components/PlayerNameHolder";
 import OpponentNameHolder from "../components/OpponentNameHolder";
 import { UserContext } from "../contexts/userContext";
+import Confetti from "react-confetti";
+import Winner from "../components/Winner";
 const GAME_OVER = "game_over";
 const MOVE = "move";
 const INIT_GAME = "init_game";
@@ -24,7 +26,10 @@ export default function () {
   const [board, setBoard] = useState(chess.board());
   const [playerColour, setPlayerColour] = useState("w");
   const [showOptions, setShowOptions] = useState(false);
-  const [opponentName, setOpponentName] = useState("");
+  const [whoWon,setWhoWon]=useState(null);
+  const [isGameOver,setIsGameOver]=useState(false);
+  const [opponent,setOpponent]=useState(null);
+  const [showConfetti,setShowConfetti]=useState(false);
   // function addGameToFirebase() {
   //   // console.log(socket);
   // }
@@ -44,6 +49,7 @@ export default function () {
             setBoard(chess.board());
             setDispButton(true);
             console.log(message.opponent);
+            setOpponent(message.opponent);
             console.log("Player Connected");
             if (message.payload.color === "b") {
               console.log(BLACK);
@@ -65,6 +71,11 @@ export default function () {
             break;
           case GAME_OVER:
             console.log("Game Over");
+            console.log(message); 
+            setIsGameOver(true);
+            setWhoWon(message.payload.winner);
+            if(message.payload.winner===playerColour)
+            setShowConfetti(true);
             break;
           default:
             console.log("Unknown message");
@@ -97,9 +108,15 @@ export default function () {
   }
   // function handleSubmission(){
   // }
+  function handleWinner(){
+    setIsGameOver(false);
+    setWhoWon(null);
+  }
+
   return (
     <div className="flex flex-col">
       <Navbar />
+       {showConfetti && <Confetti />}
       <div className="flex flex-row items-center justify-around">
         <PlayerNameHolder
           loaderShow={loaderShow}
@@ -109,9 +126,10 @@ export default function () {
           socket={socket}
           chess={chess}
           dispButton={dispButton}
+          opponent={opponent}
         />
         <div className="flex flex-col ">
-          {/* <OpponentNameHolder  /> */}
+       
           <div>
             <ChessBoard
               playerColour={playerColour}
@@ -124,20 +142,22 @@ export default function () {
               setMoves={setMoves}
             />
           </div>
-          {/* <PlayerNameHolder /> */}
+         
         </div>
+        {isGameOver && <Winner whoWon={whoWon} playerColour={playerColour} handleWinner={handleWinner}/>}
+        
         <div>
           {!dispButton && !showOptions && showPlayButton && (
             <Button
               type="primary"
-              // onClick={() => socket?.send(JSON.stringify({ type: INIT_GAME }))}
               onClick={() => setShowOptions(true)}
             >
               Play!
             </Button>
           )}
+         
           {showOptions && <TimeOptions setTime={setTime} />}
-          {/* {showOptions && <Button type="primary" onClick={()=>handleSubmission()}>Play</Button>} */}
+        
           {dispButton && <Record moves={moves} />}
           {loaderShow && <CircularIndeterminate />}
         </div>

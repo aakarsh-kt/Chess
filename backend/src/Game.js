@@ -79,7 +79,7 @@ export default class Game {
 
     // Check for game over
     if (this.board.isGameOver()) {
-      const winner = this.board.turn() === "w" ? "black" : "white";
+      const winner = this.board.turn() === "w" ? 'b' : "w";
       this.player1.send(
         JSON.stringify({
           type: GAME_OVER,

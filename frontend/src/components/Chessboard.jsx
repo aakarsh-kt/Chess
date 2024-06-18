@@ -56,26 +56,22 @@ export default function ChessBoard(props) {
         {
           setFrom(null);
         }
-        // setFrom(SQUARES[i * 8 + j]);
-        // console.log(props.chess.get(SQUARES[i * 8 + j]));
+       
       }
-      // props.setChess(props.chess);
-      // setFrom(null);
       setTo(null);
       props.setBoard(props.chess.board());
     }
   
   }
   return (
-    <div className="text-white-200 mt-20 ml-10">
+    <div className="text-white-200 mt-10">
       {console.log(props.playerColour)}
       {
         props.playerColour === "w"
           && props.board.map((row, i) => (
               <div key={i} className="flex  ">
                 {row.map((cell, j) => {
-                  // const isHighlighted = highlightedCells.includes(cell.square);
-
+                
                   return (
                     <div
                       key={j}
