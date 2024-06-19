@@ -9,7 +9,8 @@ wss.on('connection',function connection(ws){
     ws.on('error',console.error);
     gameManager.addUser(ws);
     ws.on('message',function message(data){
-        // console.log('received:',JSON.parse(data));  
+        
     })
+    ws.on('close',gameManager.removeUser.bind(gameManager,ws));
     ws.send('something');   
 }); 
