@@ -24,7 +24,7 @@ function Navbar() {
                {user!=="" && user!=undefined && <li className='rounded-md bg-slate-600 p-1' onClick={()=>logout()}>Logout</li>}
             </ul>
             
-          {user!=="" && user!=undefined && < img className='right-0  w-20 h-20 rounded-full p-2 cursor-pointer' src={user.profilePicture}/>}
+          {user!=="" && user!=undefined && < img className='right-0  w-20 h-20 rounded-full p-2 cursor-pointer' src={user.profilePicture} onClick={()=>navigate("/profile")}/>}
         </nav>
       
     </div>

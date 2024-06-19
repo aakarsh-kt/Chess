@@ -2,20 +2,11 @@ import { OrbitControls } from "@react-three/drei";
 import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
-import Hero from "../components/ChessModel";
-import Phoenix from "../components/Phoenix_bird";
-import Dragon from "../components/Dragon_flying";
-import House from "../components/House";
-import Pawn from "../components/Pawns";
-import Sidebar from "../components/Sidebar";
-import KnightFighting from "../components/KnightFighting";
 import { UserContext } from "../contexts/userContext";
 import { useContext } from "react";
-import { Button } from "@mui/material";
 import SinglePawn from "../components/SinglePawn";
 import Navbar from "../components/Navbar";
-import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
-import { db } from "../firebase";
+
 
 export default function () {
   const navigate = useNavigate();
@@ -35,7 +26,7 @@ export default function () {
           <ambientLight intensity={1} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <SinglePawn color={color2}/>
-          {/* <KnightFighting/> */}
+      
         </Canvas>
 
         <h1 className="text-white text-center text-6xl font-bold mt-6">
@@ -52,7 +43,7 @@ export default function () {
 
       </div>
       <div className="flex flex-1 justify-around items-center">
-       {/* {user.email===""?<Sidebar /> : <Button>Logout</Button>} */}
+      
        {console.log(user?.email)   }
         <img src="chessBoard.jpg" alt="chess board" className="max-w-100 max-h-96 " />
         

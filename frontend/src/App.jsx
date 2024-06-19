@@ -9,6 +9,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { getAuth } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebase.js";
+import Profile from "./screens/Profile.jsx";
 export default function () {
   const auth = getAuth();
   const [user, setUser] = useState("");
@@ -49,6 +50,7 @@ export default function () {
             <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/game" element={<Game />} />
           </Routes>

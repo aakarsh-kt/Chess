@@ -13,7 +13,6 @@ export default function ChessBoard(props) {
     const fin=arr.map((move)=>move.to);
     console.log(fin);
     const arr2=fin?.map((move)=>{
-      // console.log(((move.charCodeAt(0))-97));
       return ((move.charCodeAt(0))-97)+(56-move.charCodeAt(1))*8;
      });
      console.log(arr2);
@@ -24,19 +23,14 @@ export default function ChessBoard(props) {
     if (!from) {
       setFrom(SQUARES[i * 8 + j]);
       findMoves(i,j);
-      // console.log(SQUARES[i*8+j]);
     } else {
       setTo(SQUARES[i * 8 + j]);
-      // console.log(SQUARES[i*8+j]);
-      // console.log(JSON.stringify({type:"move",payload:{from,to:SQUARES[i*8+j]}}));
       props.socket.send(
         JSON.stringify({
           type: "move",
           payload: { from, to: SQUARES[i * 8 + j] },
         })
       );
-      // console.log(payload);
-      // console.log({from,to:SQUARES[i*8+j]});
       try {
         props.chess.move({ from, to: SQUARES[i * 8 + j] });
         props.setMoves((prev) => [
@@ -77,17 +71,13 @@ export default function ChessBoard(props) {
                       key={j}
                       className="flex"
                       onClick={() => handleMove(i,j)}
-                      // style={{
-                      //   backgroundColor: isHighlighted ? 'yellow' : 'white',
-                      // }}
+                      
                     >
                       <SquareComp
                         square={cell}
                         i={i}
                         j={j}
                         legalMoves={legalMoves}
-                        // moves={moves}
-                      
                         chess={props.chess}
                       />
                     </div>
@@ -105,9 +95,7 @@ export default function ChessBoard(props) {
                       key={j}
                       className="flex"
                       onClick={() => handleMove(i,j)}
-                      // style={{
-                      //   backgroundColor: isHighlighted ? 'yellow' : 'white',
-                      // }}
+                    
                     >
                       <SquareComp
                         square={cell}
@@ -121,7 +109,7 @@ export default function ChessBoard(props) {
                 })}
               </div>
             )).reverse()
-        //else
+    
       }
     </div>
   );

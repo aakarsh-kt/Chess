@@ -4,12 +4,10 @@ import { BLACK, Chess, WHITE } from "chess.js";
 import { useSocket } from "../hooks/useSocket";
 import { Button } from "@mui/material";
 import { Record } from "../components/Record";
-import { gameCollectionRef, db } from "../firebase";
 import Navbar from "../components/Navbar";
 import TimeOptions from "../components/TimeOptions";
 import CircularIndeterminate from "../functions/loader";
-import PlayerNameHolder from "../components/PlayerNameHolder";
-import OpponentNameHolder from "../components/OpponentNameHolder";
+import PlayerNameHolder from "../components/PlayerNameHolder";;
 import { UserContext } from "../contexts/userContext";
 import Confetti from "react-confetti";
 import Winner from "../components/Winner";
@@ -29,15 +27,22 @@ export default function () {
   const [whoWon,setWhoWon]=useState(null);
   const [isGameOver,setIsGameOver]=useState(false);
   const [opponent,setOpponent]=useState(null);
-  const [showConfetti,setShowConfetti]=useState(false);
-  // function addGameToFirebase() {
-  //   // console.log(socket);
-  // }
+  const [showConfetti,setShowConfetti]=useState(false );
+
   const [moveNo, setMoveNo] = useState(0);
   useEffect(() => {
     setBoard(chess.board());
   }, [chess]);
   const [loaderShow, setLoaderShow] = useState(false);
+  function sendMessageToSocket(winner){
+    if(playerColour===winner)
+    socket.send(JSON.stringify({
+      type:GAME_OVER,
+      payload:{
+        winner:user,
+      }
+    }));
+  }
   useEffect(() => {
     if (!socket) return;
     if (socket) {
@@ -74,6 +79,7 @@ export default function () {
             console.log(message); 
             setIsGameOver(true);
             setWhoWon(message.payload.winner);
+            sendMessageToSocket(message.payload.winner);
             if(message.payload.winner===playerColour)
             setShowConfetti(true);
             break;
