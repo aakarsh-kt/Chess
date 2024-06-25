@@ -11,10 +11,11 @@ import PlayerNameHolder from "../components/PlayerNameHolder";;
 import { UserContext } from "../contexts/userContext";
 import Confetti from "react-confetti";
 import Winner from "../components/Winner";
+
 const GAME_OVER = "game_over";
 const MOVE = "move";
 const INIT_GAME = "init_game";
-
+const DRAW = "draw";
 export default function () {
   const { user, setUser } = useContext(UserContext);
   const [moves, setMoves] = useState([]);
@@ -35,13 +36,23 @@ export default function () {
   }, [chess]);
   const [loaderShow, setLoaderShow] = useState(false);
   function sendMessageToSocket(winner){
-    if(playerColour===winner)
+    if(winner!==DRAW)
+   { if(playerColour===winner)
     socket.send(JSON.stringify({
       type:GAME_OVER,
       payload:{
         winner:user,
       }
-    }));
+    }));}
+    else
+    {
+      socket.send(JSON.stringify({
+        type:GAME_OVER,
+        payload:{
+          winner:DRAW,
+        }
+      }));
+    }
   }
   useEffect(() => {
     if (!socket) return;

@@ -1,5 +1,5 @@
 import Game from "./Game.js";
-import { GAME_OVER, INIT_GAME, MOVE } from "./messages.js";
+import { GAME_OVER, GET_GAMES, INIT_GAME, MOVE } from "./messages.js";
 import admin from 'firebase-admin';
 import serviceAccount from './chess-e3600-firebase-adminsdk-ckjup-4e265a5600.json' assert { type: 'json' };
 
@@ -9,7 +9,26 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-
+function sendGames(games, socket) {
+  console.log("Sending games");
+  console.log(games.length);
+  const gameData = games.map(game => {
+    return {
+      id: game.docId,
+      player1: game.player1Info?.email,
+      player2: game.player2Info?.email,
+      timeControl: game.timeControl,
+      subType: game.subType,
+      startTime: game.startTime,
+      winner: game.winner,
+      status: game.status
+    };
+  });
+  socket.send(JSON.stringify({
+    type: GET_GAMES,
+    payload: gameData
+  }));
+}
 export default class GameManager {
   constructor() {
     this.games = [];
@@ -135,8 +154,27 @@ export default class GameManager {
     this.addHandler(socket);
   }
 
+  
   removeUser(socket) {
+
     this.users = this.users.filter((user) => user !== socket);
+    //delete the game created by the user
+    const game = this.games.find(
+      (game) => game.player1 === socket || game.player2 === socket
+    );
+    if (game) {
+      this.games = this.games.filter((g) => g !== game);
+      this.updateGameResult(game.docId, DRAW);
+    }
+    //remove the user from pending users
+    console.log("Removing user from pending users");
+    for (const subType in this.pendingUsers) {
+      for (const category in this.pendingUsers[subType]) {
+        this.pendingUsers[subType][category] = this.pendingUsers[subType][category].filter(
+          (user) => user.s !== socket
+        );
+      }
+    }
   }
 
   handleGame(socket, userInfo, timeControl, subType, category) {
@@ -196,6 +234,9 @@ export default class GameManager {
             game.makeMove(socket, message.payload);
           }
         }
+        if(message.type===GET_GAMES){
+          sendGames(this.games,socket);
+        }
 
         if (message.type === GAME_OVER) {
           const winner = message.payload.winner;
@@ -203,8 +244,13 @@ export default class GameManager {
           const game = this.games.find(
             (game) => game.player1 === socket || game.player2 === socket
           );
+         
           if (game) {
             game.gameOver(socket, winner);
+            if(winner===DRAW){
+                this.updateGameResult(game.docId, winner);
+            }
+            else
             this.updateGameResult(game.docId, winner.email);
           }
         }

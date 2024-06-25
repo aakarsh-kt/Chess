@@ -6,16 +6,33 @@ import { UserContext } from "../contexts/userContext";
 import { useContext } from "react";
 import SinglePawn from "../components/SinglePawn";
 import Navbar from "../components/Navbar";
-
+import { useSocket } from "../hooks/useSocket";
+const GET_GAMES="get_games";
 
 export default function () {
   const navigate = useNavigate();
   const {user,setUser}=useContext(UserContext);
-
+  const socket=useSocket();
   console.log(user);
   const [color, setColor] = React.useState(0x333333); 
   const [color2, setColor2] = React.useState(0xffffff); 
-  
+  useEffect(() => {
+    if (!socket) return;
+    if (socket) {
+      socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        switch (message.type) {
+          case GET_GAMES:
+
+            console.log(message.payload);
+            navigate("/spectate",{state:{games:message.payload}})
+            break;
+          default:
+            console.log("Unknown message");
+        }
+      };
+    }
+  }, [socket]);
   return (
     <div className="h-screen w-screen flex flex-col bg-slate-800  ">
       <Navbar/>
@@ -55,6 +72,12 @@ export default function () {
             onClick={() => navigate("/game")}
           >
             Play Online
+          </button>
+          <button
+           className="btn bg-green-400 h-60px italic hover:bg-green-700 rounded text-2xl px-8 py-4 hover:text-white font-medium"
+            onClick={()=>socket?.send(JSON.stringify({type:"get_games"}))}
+          >
+            Spectate Online Games
           </button>
          
         </div>

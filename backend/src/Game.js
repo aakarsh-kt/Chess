@@ -1,5 +1,5 @@
 import { Chess } from "chess.js";
-import { INIT_GAME, MOVE, GAME_OVER } from "./messages.js";
+import { INIT_GAME, MOVE, GAME_OVER, DRAW } from "./messages.js";
 import { time } from "console";
 import {nanoid} from "nanoid";
 
@@ -78,7 +78,7 @@ export default class Game {
     }
 
     // Check for game over
-    if (this.board.isGameOver()) {
+    if (this.board.isCheckmate()) {
       const winner = this.board.turn() === "w" ? 'b' : "w";
       this.player1.send(
         JSON.stringify({
@@ -98,7 +98,26 @@ export default class Game {
       );
       return;
     }
-
+    //check for draw
+    if(this.board.isDraw() || this.board.isStalemate() || this.board.isThreefoldRepetition()){
+      this.player1.send(
+        JSON.stringify({
+          type: GAME_OVER,
+          payload: {
+            winner: DRAW,
+          },
+        })
+      );
+      this.player2.send(
+        JSON.stringify({
+          type: GAME_OVER,
+          payload: {
+            winner: DRAW,
+          },
+        })
+      );
+      return;
+    }
     // Send the move to the other player
     const opponent = socket === this.player1 ? this.player2 : this.player1;
     opponent.send(

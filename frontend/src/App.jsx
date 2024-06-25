@@ -10,6 +10,7 @@ import { getAuth } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebase.js";
 import Profile from "./screens/Profile.jsx";
+import Spectate from "./screens/Spectate.jsx";
 export default function () {
   const auth = getAuth();
   const [user, setUser] = useState("");
@@ -53,6 +54,7 @@ export default function () {
             <Route path="/profile" element={<Profile />} />
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/game" element={<Game />} />
+            <Route path="/spectate" element={<Spectate />} />
           </Routes>
         </BrowserRouter>
       </UserProvider>
