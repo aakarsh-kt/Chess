@@ -7,7 +7,7 @@ import { Record } from "../components/Record";
 import Navbar from "../components/Navbar";
 import TimeOptions from "../components/TimeOptions";
 import CircularIndeterminate from "../functions/loader";
-import PlayerNameHolder from "../components/PlayerNameHolder";;
+import PlayerNameHolder from "../components/PlayerNameHolder";
 import { UserContext } from "../contexts/userContext";
 import Confetti from "react-confetti";
 import Winner from "../components/Winner";
@@ -25,33 +25,48 @@ export default function () {
   const [board, setBoard] = useState(chess.board());
   const [playerColour, setPlayerColour] = useState("w");
   const [showOptions, setShowOptions] = useState(false);
-  const [whoWon,setWhoWon]=useState(null);
-  const [isGameOver,setIsGameOver]=useState(false);
-  const [opponent,setOpponent]=useState(null);
-  const [showConfetti,setShowConfetti]=useState(false );
+  const [whoWon, setWhoWon] = useState(null);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [opponent, setOpponent] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  console.log(socket);
 
   const [moveNo, setMoveNo] = useState(0);
   useEffect(() => {
     setBoard(chess.board());
   }, [chess]);
   const [loaderShow, setLoaderShow] = useState(false);
-  function sendMessageToSocket(winner){
-    if(winner!==DRAW)
-   { if(playerColour===winner)
-    socket.send(JSON.stringify({
-      type:GAME_OVER,
-      payload:{
-        winner:user,
+  function sendMessageToSocket(winner) {
+    console.log(winner);
+    if (winner !== DRAW) {
+      if (playerColour === winner) {
+        socket.send(
+          JSON.stringify({
+            type: GAME_OVER,
+            payload: {
+              winner: user,
+            },
+          })
+        );
+      } else {
+        socket.send(
+          JSON.stringify({
+            type: GAME_OVER,
+            payload: {
+              winner: winner,
+            },
+          })
+        );
       }
-    }));}
-    else
-    {
-      socket.send(JSON.stringify({
-        type:GAME_OVER,
-        payload:{
-          winner:DRAW,
-        }
-      }));
+    } else {
+      socket.send(
+        JSON.stringify({
+          type: GAME_OVER,
+          payload: {
+            winner: DRAW,
+          },
+        })
+      );
     }
   }
   useEffect(() => {
@@ -87,12 +102,11 @@ export default function () {
             break;
           case GAME_OVER:
             console.log("Game Over");
-            console.log(message); 
+            console.log(message);
             setIsGameOver(true);
             setWhoWon(message.payload.winner);
-            sendMessageToSocket(message.payload.winner);
-            if(message.payload.winner===playerColour)
-            setShowConfetti(true);
+            // sendMessageToSocket(message.payload.winner);
+            if (message.payload.winner === playerColour) setShowConfetti(true);
             break;
           default:
             console.log("Unknown message");
@@ -108,24 +122,28 @@ export default function () {
   //   console.log(board);
 
   function setTime(mode2, selectedTime2) {
-    console.log(mode2, selectedTime2);
-    setSelectedTime(selectedTime2);
-    setMode(mode2);
-    socket?.send(
-      JSON.stringify({
-        type: INIT_GAME,
-        timeControl: mode2,
-        subType: selectedTime2,
-        userInfo: user,
-      })
-    );
-    setShowOptions(false);
-    setLoaderShow(true);
-    setShowPlayButton(false);
+    if (mode2 === null || selectedTime2 === null)
+      alert("Please select a time control");
+    else {
+      console.log(mode2, selectedTime2);
+      setSelectedTime(selectedTime2);
+      setMode(mode2);
+      socket?.send(
+        JSON.stringify({
+          type: INIT_GAME,
+          timeControl: mode2,
+          subType: selectedTime2,
+          userInfo: user,
+        })
+      );
+      setShowOptions(false);
+      setLoaderShow(true);
+      setShowPlayButton(false);
+    }
   }
   // function handleSubmission(){
   // }
-  function handleWinner(){
+  function handleWinner() {
     setIsGameOver(false);
     setWhoWon(null);
   }
@@ -133,7 +151,7 @@ export default function () {
   return (
     <div className="flex flex-col">
       <Navbar />
-       {showConfetti && <Confetti />}
+      {showConfetti && <Confetti />}
       <div className="flex flex-row items-center justify-around">
         <PlayerNameHolder
           loaderShow={loaderShow}
@@ -146,7 +164,6 @@ export default function () {
           opponent={opponent}
         />
         <div className="flex flex-col ">
-       
           <div>
             <ChessBoard
               playerColour={playerColour}
@@ -159,23 +176,30 @@ export default function () {
               setMoves={setMoves}
             />
           </div>
-         
         </div>
-        {isGameOver && <Winner whoWon={whoWon} playerColour={playerColour} handleWinner={handleWinner}/>}
-        
+        {isGameOver && (
+          <Winner
+            whoWon={whoWon}
+            playerColour={playerColour}
+            handleWinner={handleWinner}
+          />
+        )}
+
         <div>
           {!dispButton && !showOptions && showPlayButton && (
-            <Button
-              type="primary"
-              onClick={() => setShowOptions(true)}
-            >
+            <Button type="primary" onClick={() => setShowOptions(true)}>
               Play!
             </Button>
           )}
-         
+
           {showOptions && <TimeOptions setTime={setTime} />}
-        
+
           {dispButton && <Record moves={moves} />}
+          {dispButton && (
+            <Button type="primary" onClick={() => sendMessageToSocket("w")}>
+              Resign
+            </Button>
+          )}
           {loaderShow && <CircularIndeterminate />}
         </div>
       </div>

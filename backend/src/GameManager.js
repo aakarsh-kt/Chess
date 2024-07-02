@@ -1,8 +1,23 @@
 import Game from "./Game.js";
-import { GAME_OVER, GET_GAMES, INIT_GAME, MOVE } from "./messages.js";
+import { DRAW, FINISHED, GAME_OVER, GET_GAMES, INIT_GAME, MOVE, ON_GOING } from "./messages.js";
 import admin from 'firebase-admin';
-import serviceAccount from './chess-e3600-firebase-adminsdk-ckjup-4e265a5600.json' assert { type: 'json' };
+import dotenv from 'dotenv';
+import { stat } from "fs";
 
+dotenv.config();
+const serviceAccount = {
+  type: process.env.FIREBASE_TYPE,
+  project_id: process.env.FIREBASE_PROJECT_ID,
+  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+  private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  client_id: process.env.FIREBASE_CLIENT_ID,
+  auth_uri: process.env.FIREBASE_AUTH_URI,
+  token_uri: process.env.FIREBASE_TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+  client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
+  universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN
+};
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://chess-e3600-default-rtdb.firebaseio.com",
@@ -33,6 +48,7 @@ export default class GameManager {
   constructor() {
     this.games = [];
     this.users = [];
+    this.onGoingGames = [];
     this.pendingUsers = {
       rapid: { "10|0": [], "15|10": [], "10|5": [], "30|0": [], "20|0": [], "60|0": [] },
       bullet: { "1|0": [], "1|1": [], "2|1": [], "20sec|1": [], "30sec|0": [] },
@@ -49,7 +65,7 @@ export default class GameManager {
       subType: game.subType,
       startTime: game.startTime,
       winner: "",
-      status: "ongoing"
+      status: ON_GOING
     };
     const id=obj.id;
    
@@ -69,7 +85,7 @@ export default class GameManager {
       subType: game.subType,
       startTime: game.startTime,
       winner: "",
-      status: "ongoing"
+      status: ON_GOING
     };
     await this.addGameToUser(game.player1Info?.email, newObj);
     await this.addGameToUser(game.player2Info?.email, newObj);
@@ -103,7 +119,7 @@ export default class GameManager {
       const gameRef = db.collection('games').doc(gameId);
       await gameRef.update({
         winner: winnerEmail,
-        status: "finished"
+        status: FINISHED
       });
       console.log('Game result updated successfully');
       console.log(gameRef.id, "Game ID");
@@ -133,7 +149,10 @@ export default class GameManager {
     querySnapshot.forEach(async (doc) => {
       const userGames = doc.data().games.map(game => {
         if (game.id === gameId) {
-          game.winner = (email === winnerEmail) ? "Win" : "Loss";
+          if(winnerEmail===DRAW)
+            game.winner=DRAW;
+          else
+            game.winner = (email === winnerEmail) ? "Win" : "Loss";
         }
         return game;
       });
@@ -150,10 +169,26 @@ export default class GameManager {
   }
 
   addUser(socket) {
+    const prevUser=this.users.find((user) => user === socket);
+    if(prevUser){
+      this.restoreGame(socket);
+      this.addHandler(socket);
+    }
+    else{
     this.users.push(socket);
     this.addHandler(socket);
   }
-
+  }
+  restoreGame(socket){
+    const game = this.onGoingGames.find(
+      (game) => game.player1 === socket || game.player2 === socket
+    );
+    if (game) {
+      // if(game.status===ON_GOING)
+      // this.onGoingGames.push(game);
+      game.restoreGame(socket);
+    }
+  }
   
   removeUser(socket) {
 
@@ -192,6 +227,7 @@ export default class GameManager {
         opponentInfo
       );
       this.games.push(game);
+      this.onGoingGames.push(game);
       this.addGame(game);
     } else {
       this.pendingUsers[category][subType].push({ s: socket, i: userInfo });
@@ -231,7 +267,37 @@ export default class GameManager {
             (game) => game.player1 === socket || game.player2 === socket
           );
           if (game) {
-            game.makeMove(socket, message.payload);
+            const output=game.makeMove(socket, message.payload);
+            if(output){
+
+              if(output.type===GAME_OVER){
+                const winner = message.payload.winner;
+                console.log("winner  ->  ", winner.email);
+                const game = this.games.find(
+                  (game) => game.player1 === socket || game.player2 === socket
+                );
+                if (game) {
+                  this.onGoingGames = this.onGoingGames.filter((game) => game !== game);
+                  game.gameOver(socket, winner);
+                
+                  this.updateGameResult(game.docId, winner.email);
+                }
+              }
+              if(output.type===DRAW){
+                const winner = message.payload.winner;
+                console.log("winner  ->  ", winner.email);
+                const game = this.games.find(
+                  (game) => game.player1 === socket || game.player2 === socket
+                );
+                if (game) {
+                  this.onGoingGames = this.onGoingGames.filter((game) => game !== game);
+                  game.gameOver(socket, winner);
+                
+                 
+                  this.updateGameResult(game.docId, DRAW);
+                }
+              }
+            }
           }
         }
         if(message.type===GET_GAMES){
@@ -244,8 +310,8 @@ export default class GameManager {
           const game = this.games.find(
             (game) => game.player1 === socket || game.player2 === socket
           );
-         
           if (game) {
+            this.onGoingGames = this.onGoingGames.filter((game) => game !== game);
             game.gameOver(socket, winner);
             if(winner===DRAW){
                 this.updateGameResult(game.docId, winner);
