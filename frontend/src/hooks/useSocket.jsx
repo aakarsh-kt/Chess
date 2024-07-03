@@ -4,9 +4,9 @@
 //   const [socket, setSocket] = useState(null);
 
 //   useEffect(() => {
-//     const ws = new WebSocket("wss://13.233.230.204:8080"); // Update this line
+//     // const ws = new WebSocket("wss://13.233.230.204:8080"); // Update this line
 
-//     // const ws = new WebSocket("ws://localhost:8080");
+//     const ws = new WebSocket("ws://localhost:8080");
 //     ws.onopen = () => {
 //       console.log("Connected to server");
 //       setSocket(ws);
@@ -22,45 +22,32 @@
   
 //   return socket;
 // };
-import { useState, useEffect } from 'react';
-import Pusher from 'pusher-js';
+import { useState, useEffect } from "react";
 
 export const useSocket = () => {
-  const [channel, setChannel] = useState(null);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Initialize Pusher
-    const pusher = new Pusher("05b11be49aff7d0d9690", {
-      cluster: "9f08513467fe7b5c8f7a",
-      encrypted: true
-    });
+    const ws = new WebSocket(
+      process.env.NODE_ENV === "production"
+        ? `wss://${window.location.hostname}:${process.env.PORT || 443}`
+        : "ws://localhost:8080"
+    );
 
-    // Subscribe to the channel
-    const channel = pusher.subscribe('chess-game');
-    setChannel(channel);
+    ws.onopen = () => {
+      console.log("Connected to server");
+      setSocket(ws);
+    };
 
-    // Bind to events
-    channel.bind('player-connected', (data) => {
-      console.log('Player connected:', data.userId);
-      // Handle player connected logic
-    });
+    ws.onclose = () => {
+      console.log("Disconnected from server");
+      setSocket(null);
+    };
 
-    channel.bind('player-disconnected', (data) => {
-      console.log('Player disconnected:', data.userId);
-      // Handle player disconnected logic
-    });
-
-    channel.bind('new-message', (data) => {
-      console.log('New message:', data.message);
-      // Handle new message logic
-    });
-
-    // Cleanup on component unmount
     return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
+      ws.close();
     };
   }, []);
 
-  return channel;
+  return socket;
 };
