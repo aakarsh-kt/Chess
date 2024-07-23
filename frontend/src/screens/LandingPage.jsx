@@ -7,6 +7,7 @@ import { useContext } from "react";
 import SinglePawn from "../components/SinglePawn";
 import Navbar from "../components/Navbar";
 import { useSocket } from "../hooks/useSocket";
+import { orange, red } from "@mui/material/colors";
 const GET_GAMES="get_games";
 
 export default function () {
@@ -14,7 +15,8 @@ export default function () {
   const {user,setUser}=useContext(UserContext);
   const socket=useSocket();
   console.log(user);
-  const [color, setColor] = React.useState(0x333333); 
+  const [color, setColor] = React.useState(0xffa726); 
+  const [color3, setColor3] = React.useState(0xffb74d); 
   const [color2, setColor2] = React.useState(0xffffff); 
   useEffect(() => {
     if (!socket) return;
@@ -34,7 +36,7 @@ export default function () {
     }
   }, [socket]);
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-800  ">
+    <div className="h-screen w-screen flex flex-col bg-black  ">
       <Navbar/>
       <div className="flex flex-row items-center">
       <Canvas>
@@ -42,39 +44,44 @@ export default function () {
           
           <ambientLight intensity={1} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
-          <SinglePawn color={color2}/>
+          <SinglePawn color={color3}/>
       
         </Canvas>
 
-        <h1 className="text-white text-center text-6xl font-bold mt-6">
-         Chess Wizards
-        </h1>
+        <div className="text-white text-center text-7xl font-bold mt-6  rounded-md">
+          <h1 >
+          Chess
+          </h1>
+          <h1 className="text-orange-400">
+          Nerds
+          </h1>
+        </div>
         <Canvas>
           <OrbitControls />
           
           <ambientLight intensity={1} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
-          <SinglePawn color={color}/>
+          <SinglePawn color={color2}/>
 
         </Canvas>
 
       </div>
-      <div className="flex flex-1 justify-around items-center">
+      <div className="flex flex-1 justify-around items-center ">
       
        {console.log(user?.email)   }
-        <img src="chessBoard.jpg" alt="chess board" className="max-w-100 max-h-96 " />
+        <img src="chessBoard.jpg" alt="chess board" className="max-w-100 max-h-96  " />
         
        
         <div className="flex flex-col gap-y-5 mr-20 ">
           
           <button
-            className="btn bg-green-400 h-60px italic hover:bg-green-700 rounded text-2xl px-8 py-4 hover:text-white font-medium"
+            className="btn bg-orange-400 h-60px italic text-white hover:bg-cyan-400 rounded text-2xl px-8 py-4 hover:text-black font-medium"
             onClick={() => navigate("/game")}
           >
             Play Online
           </button>
           <button
-           className="btn bg-green-400 h-60px italic hover:bg-green-700 rounded text-2xl px-8 py-4 hover:text-white font-medium"
+           className="btn bg-black-400 h-60px border  italic text-orange-400 hover:bg-cyan-400 rounded text-2xl px-8 py-4 hover:text-black font-medium"
             onClick={()=>socket?.send(JSON.stringify({type:"get_games"}))}
           >
             Spectate Online Games

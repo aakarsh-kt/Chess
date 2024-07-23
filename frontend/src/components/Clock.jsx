@@ -80,17 +80,17 @@
       <div>
         {/* {   console.log(player1Time)} */}
         {/* {   console.log(props.moveNo)} */}
-        <Box className="flex flex-col items-center bg-slate-500 rounded-md cursor-pointer">
+        <Box className="flex flex-col  items-center bg-black rounded-md cursor-pointer">
 
         {props.playerColour==='w'? 
           <div>
-            <h2 className="text-white font-medium m-3">{Math.floor(player2Time/60)}:{(player2Time%60)>9?player2Time%60:'0'+player2Time%60}</h2>
-            <h2 className="text-white font-medium m-3">{Math.floor(player1Time/60)}:{(player1Time%60)>9?player1Time%60:'0'+player1Time%60}</h2>
+            <h2 className="text-orange-300 font-medium m-3">{Math.floor(player2Time/60)}:{(player2Time%60)>9?player2Time%60:'0'+player2Time%60}</h2>
+            <h2 className="text-orange-300 font-medium m-3">{Math.floor(player1Time/60)}:{(player1Time%60)>9?player1Time%60:'0'+player1Time%60}</h2>
           </div>
           :
           <div>
-            <h2 className="text-white font-medium m-3">{Math.floor(player1Time/60)}:{(player1Time%60)>9?player1Time%60:'0'+player1Time%60}</h2>
-            <h2 className="text-white font-medium m-3">{Math.floor(player2Time/60)}:{(player2Time%60)>9?player2Time%60:'0'+player2Time%60}</h2>
+            <h2 className="text-orange-300 font-medium m-3">{Math.floor(player1Time/60)}:{(player1Time%60)>9?player1Time%60:'0'+player1Time%60}</h2>
+            <h2 className="text-orange-300 font-medium m-3">{Math.floor(player2Time/60)}:{(player2Time%60)>9?player2Time%60:'0'+player2Time%60}</h2>
           </div>
           }
         </Box>

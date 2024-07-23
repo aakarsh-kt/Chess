@@ -149,7 +149,7 @@ export default function () {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-black h-screen">
       <Navbar />
       {showConfetti && <Confetti />}
       <div className="flex flex-row items-center justify-around">
@@ -187,9 +187,9 @@ export default function () {
 
         <div>
           {!dispButton && !showOptions && showPlayButton && (
-            <Button type="primary" onClick={() => setShowOptions(true)}>
-              Play!
-            </Button>
+            <div className='flex flex-row  justify-center mt-5  '>
+            <button   className="text-xl bg-orange-500 rounded-md py-1 w-32 text-black font-bold" onClick={() => setShowOptions(true) }>Play</button>
+            </div>
           )}
 
           {showOptions && <TimeOptions setTime={setTime} />}

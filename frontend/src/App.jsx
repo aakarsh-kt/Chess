@@ -11,10 +11,13 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "./firebase.js";
 import Profile from "./screens/Profile.jsx";
 import Spectate from "./screens/Spectate.jsx";
-export default function () {
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { useLocation } from "react-router-dom";
+import { Switch } from "@mui/material";
+export const  App=() =>{
   const auth = getAuth();
   const [user, setUser] = useState("");
-
+  const location=useLocation();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -29,7 +32,7 @@ export default function () {
       if (value != undefined) {
         console.log(value);
         const q = query(
-          collection(db, collectionName),
+          collection(db, collectionName), 
           where(field, operator, value)
         );
         const querySnapshot = await getDocs(q);
@@ -44,20 +47,33 @@ export default function () {
   }, [user]);
 
   return (
-    <div className="bg-slate-800 h-screen">
-      <UserProvider user={playerInfo} setUser={setPlayerInfo}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/landing" element={<LandingPage />} />
-            <Route path="/game" element={<Game />} />
-            <Route path="/spectate" element={<Spectate />} />
-          </Routes>
-        </BrowserRouter>
-      </UserProvider>
-    </div>
+    <UserProvider user={playerInfo} setUser={setPlayerInfo}>
+      <div className="bg-slate-800 h-screen">
+        <TransitionGroup>
+          <CSSTransition key={location.key} timeout={300} classNames="fade">
+            <Routes location={location}>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/landing" element={<LandingPage />} />
+              <Route path="/game" element={<Game />} />
+              <Route path="/spectate" element={<Spectate />} />
+            </Routes>
+          </CSSTransition>
+        </TransitionGroup>
+      </div>
+    </UserProvider>
   );
 }
+
+// Wrapping the App with BrowserRouter
+const WrappedApp = () => {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+};
+
+export default WrappedApp;

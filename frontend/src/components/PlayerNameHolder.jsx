@@ -14,7 +14,7 @@ export default function PlayerNameHolder(props) {
   }, [props.selectedTime]);
 
   return (
-    <div className="bg-slate-700 flex flex-col h-96 justify-evenly mt-20 ml-10 rounded-md w-40 items-center">
+    <div className="bg-slate-700 flex  flex-col h-96 justify-evenly mt-20 ml-10 rounded-md w-40 items-center">
       {/* {console.log(user)} */}
     
       {/* <h3 className="text-white font-bold font-size-6 "> */}

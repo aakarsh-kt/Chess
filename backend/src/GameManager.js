@@ -2,7 +2,7 @@ import Game from "./Game.js";
 import { DRAW, FINISHED, GAME_OVER, GET_GAMES, INIT_GAME, MOVE, ON_GOING } from "./messages.js";
 import admin from 'firebase-admin';
 import dotenv from 'dotenv';
-import { stat } from "fs";
+
 
 dotenv.config();
 const serviceAccount = {
