@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/userContext";
 import { useContext } from "react";
 import SinglePawn from "../components/SinglePawn";
+import Dragon from "../components/Dragon_flying";
+import Plane from "../components/Plane";
+import FlyingPlane from "../components/Planes";
 import Navbar from "../components/Navbar";
 import { useSocket } from "../hooks/useSocket";
 import { orange, red } from "@mui/material/colors";
@@ -36,18 +39,20 @@ export default function () {
     }
   }, [socket]);
   return (
-    <div className="h-screen w-screen flex flex-col bg-black  ">
+    <div className="h-screen w-screen flex flex-col bg-black relative overflow-visible">
       <Navbar/>
-      <div className="flex flex-row items-center">
-      <Canvas>
+      <div className="flex flex-row items-center relative overflow-visible">
+      <Canvas className="relative overflow-visible" style={{zIndex:1}}>
           <OrbitControls />
           
           <ambientLight intensity={1} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <SinglePawn color={color3}/>
-      
+          {/* <Dragon /> */}
+          {/* <Plane/> */}
+          {/* <FlyingPlane/> */}
         </Canvas>
-
+        
         <div className="text-white text-center text-7xl font-bold mt-6  rounded-md">
           <h1 >
           Chess

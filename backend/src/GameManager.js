@@ -5,19 +5,35 @@ import dotenv from 'dotenv';
 
 
 dotenv.config();
-const serviceAccount = {
-  type: process.env.FIREBASE_TYPE,
-  project_id: process.env.FIREBASE_PROJECT_ID,
-  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-  private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  client_email: process.env.FIREBASE_CLIENT_EMAIL,
-  client_id: process.env.FIREBASE_CLIENT_ID,
-  auth_uri: process.env.FIREBASE_AUTH_URI,
-  token_uri: process.env.FIREBASE_TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-  client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
-  universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN
-};
+const serviceAccount={
+  type: "service_account",
+  project_id: "chess-e3600",
+  private_key_id: "4e265a56002f52a77c53c6dfb6fa3019592ad7b8",
+  private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCf6oQSa/+fgfJt\n31lnTj8lrrG0k4XIDVeV7uKt/pK4hcBrkYhWN1IPz5ynHRGoiAsCaCsHgxQWWe/j\nC4MxxowBijUhb3t1+I0fdLt5M3OEI5wNsnjXR1yPWHQC8nHca5UrusEmqgXNgXa1\nMAMwBQDoHjzeel1kfDIy7DeSvhDixZU25BCvhj1nK9VRznOL6NhYqimyR0BZJbXp\n3X+2VkkMhR4bIDRGPpJPMO9y6DKMIN6lDT/dhiRgsq48r/0kGZb0fKNNLW17t8hK\nULUHoDqWiE2tckldw+o1VqCj0dbX0TXzVKTquW5PbcneiwR3OKn2/nLNvtmLJIkS\nE0b/KsKrAgMBAAECgf8vXsjArD03LXHNb4aMPiF2iB5xNJdB1gdGjVJDOFCTWGDS\nJx9maqdkXPDf5TyAhSFoanL/Rqosn3ean05oRZLeNz0wf6roHI2xQ7hFBCNegS3j\ni3qVoA31vb31IYbuREVr2WZd4v9/tgSep2+fnzElkSTMF8iSe40N3etDDLTzzMY7\nzEdUxIx4L6p/Ak+elF3o3FU2EPPEcMXbDcbgNA75iB3z1m5bSubvrDyqDKSRR3yJ\nga9ftL1t4JuxI7rM0NNjvG6NjM4exh76bdGGGDKottOAJYyVqCbfYFk4G0B+Qakb\n7yHPArmKEGh3npOn5PVCK0Di6JtTDrQaKWcYNWUCgYEA0/IWF/6hRaMn37abjeYe\nwCoxkC63ZCqSnNUJOQNuXQLhblZYHAJq1SEZ2C6KL5xcv+M64MhyMm/4BZe+uobP\n/fgpGVaPFZCsdAqsV/FaLcNjKTke++ei3hKikDeySqT8DKG5eY61inJEQ7PfD2dw\nLIHW/m3vUf8Xm2oycvSUYf0CgYEAwSfdrxzDnYFk1pu7tNO7gx6DCKxpnJpmg4uR\ncAJN+zC4McqPqVUTkaWt2w1jKe03R1MBcg2Rl3Y9oIiJb9RFzA4fQPheHoRgmSoX\n0/Z/QNtRpALDqYQP7sd1/YhoObeWMIYspBHT9AMCUSxESIco4RdT3NaK6TjJ4U0v\nlLkxI8cCgYEApDmXzv3ZPpk+g0T+YUQnHaVUBDF+npmyQt17qPa0pFNgE9vJp+Jj\nn0NnwC/HmT6iS3kpnRUUD2rdFpBPFD7zmQmZ5u1AL2iLh9rhUb9MrdsQ0ddV38DL\nXSG5XuAZQWd3ed4yVjMzDdSeeos8UrZGn+X3jevnHXT4eM8fyh0jgI0CgYBxmxMF\n9bMQJpS6rOogFxCItB95sH6Ff0KgSCyIZrKa9TLBBlSs0b8qwPmahys187G5n5aQ\nEG77WK4yh1vejElpFT1Ip0wkQtPWAi31m1uJN/Wys3WFdIkyddpt/hbfK52IeMI0\n1c+GC2cHezPGPMjMaz4F+6HEPoRuoUlE/g9q7QKBgQDNMQP7FBJxnUA0oNHg+3ys\n4WGMZOZBtzwO489Ykat4RD7AEkLIEUJKblKqIKUnLFIwynNshLkw2p/Jp1UYhwfj\nMjRXyM0qUIq/tP1w+z8d3sFfGSLqDXWPD//16uPzqMdRx2Sx06WhUWUdIss+os8E\nlu3fZTBCo8ePiSSSZ+ARvg==\n-----END PRIVATE KEY-----\n",
+  client_email: "firebase-adminsdk-ckjup@chess-e3600.iam.gserviceaccount.com",
+  client_id: "113106098887821369152",
+  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  token_uri: "https://oauth2.googleapis.com/token",
+  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ckjup%40chess-e3600.iam.gserviceaccount.com",
+  universe_domain: "googleapis.com"
+}
+
+
+// const serviceAccount = {
+//   type: process.env.FIREBASE_TYPE,
+//   project_id: process.env.FIREBASE_PROJECT_ID,
+//   private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+//   // private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+//   private_key:"-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCf6oQSa/+fgfJt\n31lnTj8lrrG0k4XIDVeV7uKt/pK4hcBrkYhWN1IPz5ynHRGoiAsCaCsHgxQWWe/j\nC4MxxowBijUhb3t1+I0fdLt5M3OEI5wNsnjXR1yPWHQC8nHca5UrusEmqgXNgXa1\nMAMwBQDoHjzeel1kfDIy7DeSvhDixZU25BCvhj1nK9VRznOL6NhYqimyR0BZJbXp\n3X+2VkkMhR4bIDRGPpJPMO9y6DKMIN6lDT/dhiRgsq48r/0kGZb0fKNNLW17t8hK\nULUHoDqWiE2tckldw+o1VqCj0dbX0TXzVKTquW5PbcneiwR3OKn2/nLNvtmLJIkS\nE0b/KsKrAgMBAAECgf8vXsjArD03LXHNb4aMPiF2iB5xNJdB1gdGjVJDOFCTWGDS\nJx9maqdkXPDf5TyAhSFoanL/Rqosn3ean05oRZLeNz0wf6roHI2xQ7hFBCNegS3j\ni3qVoA31vb31IYbuREVr2WZd4v9/tgSep2+fnzElkSTMF8iSe40N3etDDLTzzMY7\nzEdUxIx4L6p/Ak+elF3o3FU2EPPEcMXbDcbgNA75iB3z1m5bSubvrDyqDKSRR3yJ\nga9ftL1t4JuxI7rM0NNjvG6NjM4exh76bdGGGDKottOAJYyVqCbfYFk4G0B+Qakb\n7yHPArmKEGh3npOn5PVCK0Di6JtTDrQaKWcYNWUCgYEA0/IWF/6hRaMn37abjeYe\nwCoxkC63ZCqSnNUJOQNuXQLhblZYHAJq1SEZ2C6KL5xcv+M64MhyMm/4BZe+uobP\n/fgpGVaPFZCsdAqsV/FaLcNjKTke++ei3hKikDeySqT8DKG5eY61inJEQ7PfD2dw\nLIHW/m3vUf8Xm2oycvSUYf0CgYEAwSfdrxzDnYFk1pu7tNO7gx6DCKxpnJpmg4uR\ncAJN+zC4McqPqVUTkaWt2w1jKe03R1MBcg2Rl3Y9oIiJb9RFzA4fQPheHoRgmSoX\n0/Z/QNtRpALDqYQP7sd1/YhoObeWMIYspBHT9AMCUSxESIco4RdT3NaK6TjJ4U0v\nlLkxI8cCgYEApDmXzv3ZPpk+g0T+YUQnHaVUBDF+npmyQt17qPa0pFNgE9vJp+Jj\nn0NnwC/HmT6iS3kpnRUUD2rdFpBPFD7zmQmZ5u1AL2iLh9rhUb9MrdsQ0ddV38DL\nXSG5XuAZQWd3ed4yVjMzDdSeeos8UrZGn+X3jevnHXT4eM8fyh0jgI0CgYBxmxMF\n9bMQJpS6rOogFxCItB95sH6Ff0KgSCyIZrKa9TLBBlSs0b8qwPmahys187G5n5aQ\nEG77WK4yh1vejElpFT1Ip0wkQtPWAi31m1uJN/Wys3WFdIkyddpt/hbfK52IeMI0\n1c+GC2cHezPGPMjMaz4F+6HEPoRuoUlE/g9q7QKBgQDNMQP7FBJxnUA0oNHg+3ys\n4WGMZOZBtzwO489Ykat4RD7AEkLIEUJKblKqIKUnLFIwynNshLkw2p/Jp1UYhwfj\nMjRXyM0qUIq/tP1w+z8d3sFfGSLqDXWPD//16uPzqMdRx2Sx06WhUWUdIss+os8E\nlu3fZTBCo8ePiSSSZ+ARvg==\n-----END PRIVATE KEY-----\n",
+//   client_email: process.env.FIREBASE_CLIENT_EMAIL,  
+//   client_id: process.env.FIREBASE_CLIENT_ID,
+//   auth_uri: process.env.FIREBASE_AUTH_URI,
+//   token_uri: process.env.FIREBASE_TOKEN_URI,
+//   auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+//   client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
+//   universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN
+// };
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://chess-e3600-default-rtdb.firebaseio.com",
