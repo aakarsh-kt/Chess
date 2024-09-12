@@ -1,8 +1,9 @@
-
 import { WebSocketServer } from 'ws';
 import GameManager from './GameManager.js';
 import http from 'http';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -12,6 +13,23 @@ const server = http.createServer((req, res) => {
   if (req.url === '/health') {
     res.writeHead(200);
     res.end('Server is healthy');
+  } else {
+    // Serve the frontend
+    const filePath = path.join(__dirname, '../frontend/build', req.url === '/' ? 'index.html' : req.url);
+    fs.readFile(filePath, (err, content) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          res.writeHead(404);
+          res.end('404 Not Found');
+        } else {
+          res.writeHead(500);
+          res.end('Server Error');
+        }
+      } else {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(content, 'utf-8');
+      }
+    });
   }
 });
 

@@ -11,6 +11,7 @@ import PlayerNameHolder from "../components/PlayerNameHolder";
 import { UserContext } from "../contexts/userContext";
 import Confetti from "react-confetti";
 import Winner from "../components/Winner";
+import { convertLength } from "@mui/material/styles/cssUtils";
 
 const GAME_OVER = "game_over";
 const MOVE = "move";
@@ -26,10 +27,11 @@ export default function () {
   const [playerColour, setPlayerColour] = useState("w");
   const [showOptions, setShowOptions] = useState(false);
   const [whoWon, setWhoWon] = useState(null);
+  const [whoLost,setWhoLost]=useState(null);
   const [isGameOver, setIsGameOver] = useState(false);
   const [opponent, setOpponent] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  console.log(socket);
+  // console.log(socket);
 
   const [moveNo, setMoveNo] = useState(0);
   useEffect(() => {
@@ -40,6 +42,7 @@ export default function () {
     console.log(winner);
     if (winner !== DRAW) {
       if (playerColour === winner) {
+        console.log(winner);
         socket.send(
           JSON.stringify({
             type: GAME_OVER,
@@ -48,7 +51,9 @@ export default function () {
             },
           })
         );
+
       } else {
+        console.log(winner);
         socket.send(
           JSON.stringify({
             type: GAME_OVER,
@@ -105,6 +110,7 @@ export default function () {
             console.log(message);
             setIsGameOver(true);
             setWhoWon(message.payload.winner);
+            setWhoLost(message.payload.winner==WHITE?BLACK:WHITE);
             // sendMessageToSocket(message.payload.winner);
             if (message.payload.winner === playerColour) setShowConfetti(true);
             break;
@@ -149,8 +155,8 @@ export default function () {
   }
 
   return (
-    <div className="flex flex-col bg-black h-screen">
-      <Navbar />
+    <div className="flex flex-col bg-black h-screen w-screen">
+    {opponent==null &&  <Navbar />}
       {showConfetti && <Confetti />}
       <div className="flex flex-row items-center justify-around">
         <PlayerNameHolder
@@ -196,7 +202,7 @@ export default function () {
 
           {dispButton && <Record moves={moves} />}
           {dispButton && (
-            <Button type="primary" onClick={() => sendMessageToSocket("w")}>
+            <Button type="primary" onClick={() => sendMessageToSocket(playerColour==WHITE?BLACK:WHITE)}>
               Resign
             </Button>
           )}

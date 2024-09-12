@@ -46,6 +46,7 @@ export default class Game {
 
   gameOver(socket, winner) {
     if (socket === this.player1) {
+      console.log("game over has happened",winner);
       this.player2.send(
         JSON.stringify({
           type: GAME_OVER,
@@ -55,6 +56,7 @@ export default class Game {
         })
       );
     } else {
+      console.log("game over has happened",winner);
       this.player1.send(
         JSON.stringify({
           type: GAME_OVER,
@@ -84,7 +86,7 @@ export default class Game {
 
     // }
     const result = this.board.move(move);
-
+    console.log("Checkmate has got it",move);
     if (!result) {
       console.log("Invalid move:", move);
       return;
@@ -92,6 +94,7 @@ export default class Game {
 
     // Check for game over
     if (this.board.isCheckmate()) {
+      console.log("Checkmate",move);
       const winner = this.board.turn() === "w" ? "b" : "w";
       output = {
         type: GAME_OVER,

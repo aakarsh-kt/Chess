@@ -11,7 +11,8 @@ function Navbar() {
             console.log("reached");
             setUser(undefined);
             await signOut(auth);
-          }
+	    navigate("/");         
+ }
        
     
   return (

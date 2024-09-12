@@ -49,6 +49,7 @@ export const  App=() =>{
   return (
     <UserProvider user={playerInfo} setUser={setPlayerInfo}>
       <div className="bg-slate-800 h-screen">
+        
         <TransitionGroup>
           <CSSTransition key={location.key} timeout={300} classNames="fade">
             <Routes location={location}>

@@ -78,11 +78,12 @@ export default function () {
         
        
         <div className="flex flex-col gap-y-5 mr-20 ">
-          
+        {console.log(user?.rating)}
           <button
             className="btn bg-orange-400 h-60px italic text-white hover:bg-cyan-400 rounded text-2xl px-8 py-4 hover:text-black font-medium"
             onClick={() => navigate("/game")}
           >
+
             Play Online
           </button>
           <button

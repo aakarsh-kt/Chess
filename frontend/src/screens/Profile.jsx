@@ -9,7 +9,7 @@ const ProfilePage = () => {
 
     useEffect(() => {   
         if (user) {
-            const date = user.createdAt.toDate();
+            const date = user?.createdAt.toDate();
             console.log(date);
             setGamesWon(user.games.filter((game) => game.winner === 'Win').length);
             setDate(date);
@@ -54,7 +54,7 @@ const ProfilePage = () => {
                                         <p className="text-lg font-medium">v/s: {game?.player2}</p>
                                         <div className="flex flex-col">
                                             <p className="text-gray-600">Result: {game?.winner}</p>
-                                            <p className="text-gray-500">{format(game?.startTime.toDate(), 'Pp')}</p>
+                                            <p className="text-gray-500">{format(game?.startTime?.toDate(), 'Pp')}</p>
                                         </div>
                                     </div>
                                 </div>

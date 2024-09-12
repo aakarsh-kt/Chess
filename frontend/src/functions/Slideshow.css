@@ -19,6 +19,7 @@ body {
     width: 100%;
     /* min-width: 200px;
     min-height: 200px; */
+    height: 120px;
     display: block;
     border-radius: 10px;
 }

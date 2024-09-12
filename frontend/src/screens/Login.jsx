@@ -9,7 +9,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-
+import NavBar from "../components/Navbar.jsx";
 import { auth, provider } from "../firebase.js";
 import { Link, Outlet } from "react-router-dom";
 export default function () {
@@ -62,8 +62,9 @@ export default function () {
     await signOut(auth);
   }
   return (
-    <div className="flex flex-col justify-evenly  items-center h-screen">
-      <h1 className="text-6xl text-center font-bold text-white">Login</h1>
+    <div className="w-screen flex flex-col justify-evenly  items-center h-screen">
+	<NavBar/>     
+ <h1 className="text-6xl text-center font-bold text-white">Login</h1>
       <form onSubmit={login} className="flex flex-col justify-evenly">
         <label htmlFor="username" className="text-white">Username</label>
         <input

@@ -23,6 +23,55 @@
 .square-highLight{
     background-color: yellow;
 }
+/* .square-highLight-light{
+ 
+   background-color: green;  
+   width: 16px;
+   height: 16px;
+   border-radius: 50%;     
+
+} */
+
+
+.square-highLight-light {
+  width: 64px;              /* Adjust size as needed */
+  height: 64px;             /* Adjust size as needed */
+  background-color: rgb(224, 212, 212);  /* White background for the square */
+  position: relative;       /* Allows the dot to be positioned inside */
+ 
+}
+
+.square-highLight-light::after {
+  content: '';
+  width: 10px;              /* Adjust size for the dot */
+  height: 10px;             /* Adjust size for the dot */
+  background-color: black;  /* Black dot */
+  border-radius: 50%;       /* Makes the dot circular */
+  position: absolute;
+  top: 50%;                 /* Centers the dot vertically */
+  left: 50%;                /* Centers the dot horizontally */
+  transform: translate(-50%, -50%);  /* Adjusts for exact center */
+}
+.square-highLight-dark {
+  width: 64px;              /* Adjust size as needed */
+  height: 64px;             /* Adjust size as needed */
+  background-color: green;  /* White background for the square */
+  position: relative;       /* Allows the dot to be positioned inside */
+    /* Optional: light border for the square */
+}
+
+.square-highLight-dark::after {
+  content: '';
+  width: 10px;              /* Adjust size for the dot */
+  height: 10px;             /* Adjust size for the dot */
+  background-color: black;  /* Black dot */
+  border-radius: 50%;       /* Makes the dot circular */
+  position: absolute;
+  top: 50%;                 /* Centers the dot vertically */
+  left: 50%;                /* Centers the dot horizontally */
+  transform: translate(-50%, -50%);  /* Adjusts for exact center */
+}
+
 .height-moves{
     height: 480px;
     margin-top: 80px;

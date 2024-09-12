@@ -9,7 +9,7 @@ export const SquareComp = (props) => {
     <div>
       <div
         className={` w-16 h-16 flex square-${
-          props.legalMoves?.indexOf(props.i*8+props.j)!=-1 && props.legalMoves?.indexOf(props.i*8+props.j)!=null?"highLight":((props.i + props.j) % 2 == 0 ? "light" : "dark")
+          props.legalMoves?.indexOf(props.i*8+props.j)!=-1 && props.legalMoves?.indexOf(props.i*8+props.j)!=null?((props.i + props.j) % 2 == 0 ? "highLight-light" : "highLight-dark"):((props.i + props.j) % 2 == 0 ? "light" : "dark")
         }`}
 
       >

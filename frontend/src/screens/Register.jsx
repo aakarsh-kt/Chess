@@ -29,6 +29,7 @@ export default function Signup() {
       games: [],
       profilePicture: url,
       createdAt: serverTimestamp(),
+      rating:{"rapid":800,"blitz":800,"bullet":800}
     };
 
     try {
@@ -86,28 +87,28 @@ export default function Signup() {
       [name]: value,
     }));
   };
-
+	const [method,setMethod]=React.useState(0);
   return (
     <div className="flex flex-col items-center gap-10 h-screen">
       <Navbar />
       <h1 className="text-6xl text-white font-bold mt-10 gap-10">Sign Up</h1>
       <div className="flex flex-row justify-between m-10">
-        <div className="flex flex-col items-center">
-          <h1 className="text-2xl text-white font-bold">SignUp with Google</h1>
+     {(method==0 || method==1) &&   <div className="flex flex-col items-center">
+         <h1 className="text-2xl text-white font-bold">SignUp with Google</h1>
           <img
             src="googleSignInLogo.png"
-            onClick={signInWithGoogle}
+            onClick={()=>{signInWithGoogle(),setMethod(1)}}
             className="bg-white w-10 h-10 cursor-pointer border rounded-full"
           />
-        </div>
-        <h2 className="text-white  font-bold text-xl mx-10">OR</h2>
-        <div className="text-white cursor-pointer font-bold text-2xl">
+        </div> }
+       {method==0 && <h2 className="text-white  font-bold text-xl mx-10">OR</h2>}
+       {(method==2 || method==0) && <div className="text-white cursor-pointer font-bold text-2xl">
           <div className="flex flex-col items-center">
             Sign Up With Email
             <img
               src="email2.jpeg"
               className="w-10 h-10 rounded-full"
-              onClick={() => setVal(!val)}
+              onClick={() =>{ setVal(!val),setMethod(2)}}
             />
           </div>
           {val && (
@@ -154,7 +155,7 @@ export default function Signup() {
               <Button type="submit">Register</Button>
             </form>
           )}
-        </div>
+        </div>}
       </div>
       {error && <p>{error}</p>}
     </div>
